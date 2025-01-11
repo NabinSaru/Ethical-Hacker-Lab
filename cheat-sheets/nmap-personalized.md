@@ -1,5 +1,11 @@
 # NMAP
 
+```sh
+-h # help manual
+-v # add verbosity
+-vv ## higher verbosity
+```
+
 ## NMAP Top 5
 
 ```sh
@@ -68,3 +74,67 @@ PORT    STATE         SERVICE
 
 Here chargen service is closed because the ICMP header specify that the destination/port is unreachable. ntp is open because it receives the valid response from the destination. Open/filtered on the other hand may be due to the fact that the application may not generate any response for the datagram as lacks the data in the data field and the application don't have any idea with how to proceed with the null data. Or, the packet is filtered by firewall. Hence, open/filtered state.
 
+## OS and version detection
+
+NMAP maps the responses from the handshake packets with the database records to figure out the OS version and reads the versions of the application from packet response.
+
+```sh
+sudo nmap -O 192.168.1.1 # OS detection
+sudo nmap -sV 192.168.1.1 # Version detection
+```
+
+## Timing Templates
+
+Specifies the aggressiveness of the scanning.
+
+```sh
+sudo nmap -T0 192.168.1.1 # Paranoid
+sudo nmap -T1 192.168.1.1 # Sneaky
+sudo nmap -T2 192.168.1.1 # Polite
+sudo nmap -T3 192.168.1.1 # Normal, Default
+sudo nmap -T4 192.168.1.1 # Aggressive
+sudo nmap -T5 192.168.1.1 # Insane
+```
+
+## NMAP Scripting Engine (NSE)
+
+```sh
+ls usr/share/nmap/scripts # list all available scripts
+nmap --script-updatedb # update the scripts
+nmap --script "http-auth" scanme.nmap.org # using specific script
+nmap --script "ftp-*" scanme.nmap.org # using wild card for the matching scripts
+nmap --script default,safe scanme.nmap.org # Loads all scripts in the default and safe categories
+nmap --script default,banner,/home/user/customscripts # Loads the script in the default category, the banner script, and all .nse files in the directory /home/user/customscripts.
+```
+
+Additionally, here are some of the supported syntax from NMAP documentation.
+
+```sh
+nmap --script "not intrusive" # Loads every script except for those in the intrusive category.
+nmap --script "default or safe" #This is functionally equivalent to nmap --script "default,safe". It loads all scripts that are in the default category or the safe category or both.
+nmap --script "default and safe" # Loads those scripts that are in both the default and safe categories.
+nmap --script "(default or safe or intrusive) and not http-*" # Loads scripts in the default, safe, or intrusive categories, except for those whose names start with http-.
+```
+
+### NMAP Default Scripts
+
+```sh
+nmap -sC scanme.nmap.org # or
+nmap --script=default scanme.nmap.org # or
+nmap --script default scanme.nmap.org
+```
+
+### Banner Script
+
+A simple banner grabber which connects to an open TCP port and prints out anything sent by the listening service within five seconds.
+
+```sh
+nmap --script "banner" scanme.nmap.org
+```
+
+### HTTP Scripts
+
+```sh
+nmap --script "http-methods" scanme.nmap.org # checks the available http request types
+nmap --script "http-enum" scanme.nmap.org # enumerate the http application
+```
