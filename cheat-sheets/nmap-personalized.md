@@ -150,3 +150,34 @@ nmap --script "smb-enum-users" 172.17.0.2 # enumerate the microsoft smb users fo
 nmap -sV --script "vulners" 172.17.0.2 # maps the service version with the vulnerability database (CVE)
 nmap --script "ssl-enum-ciphers" 172.17.0.2 -p 443 # Discover the TLS version and finds the supported ciphers with their security grade
 ```
+
+## Firewall / IDS Evasion and IP Spoofing
+
+### Fragmentation
+
+Split the TCP header over several packets to make it harder for the packet filters and IDS for detection.
+However, this may be detected by modern firewalls and prevented or the service may be programmed to not accept fragmented packets.
+
+```sh
+sudo nmap -sS -f scanme.nmap.org -p 80
+```
+
+### IP Spoofing
+
+IP Spoofing is basically spoofing(faking) the source IP of the packet with another IP. This can be done with following command.
+
+```sh
+sudo nmap -sS -p80 -S 192.168.1.200 -e eth0 scanme.nmap.org # -S specifies the spoofed IP and -e network adapter name
+```
+
+This maybe one-way transmission only because the response will be sent to the spoofed IP not the actual source IP. Unless there is way to intercept the response.
+
+### Decoy Scan (Cloaked Scan)
+
+Nmap's decoy scan option, -D, makes it appear as if multiple hosts are scanning a target, hiding the attacker's identity.
+Nmap sends multiple packets with different IP addresses, along with the attacker's IP address. This makes it difficult for the target to determine which hosts are the attackers and which are decoys.
+
+```sh
+sudo nmap -sS -p80 -D 192.168.1.200,192.168.1.201,192.168.1.202 -e eth0 scanme.nmap.org # -D specifies the decoy IPs along with real IP and -e network adapter name
+sudo nmap -sS -p80 -D RND:20 -e eth0 scanme.nmap.org # Decoy using random 20 IPs
+```
