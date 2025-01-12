@@ -138,3 +138,15 @@ nmap --script "banner" scanme.nmap.org
 nmap --script "http-methods" scanme.nmap.org # checks the available http request types
 nmap --script "http-enum" scanme.nmap.org # enumerate the http application
 ```
+
+## Frequent NSE Scripts
+
+```sh
+nmap --script "banner" 172.17.0.2 # services and version
+nmap --script "http-enum" 172.17.0.2 # enumerate the http application
+nmap --script "ftp-anon" 172.17.0.2 -p 21 # check if the anonymous login is supportedb in ftp port
+nmap --script "ftp-brute" 172.17.0.2 -p 21 # brute force the login credentials for ftp login
+nmap --script "smb-enum-users" 172.17.0.2 # enumerate the microsoft smb users for port 445
+nmap -sV --script "vulners" 172.17.0.2 # maps the service version with the vulnerability database (CVE)
+nmap --script "ssl-enum-ciphers" 172.17.0.2 -p 443 # Discover the TLS version and finds the supported ciphers with their security grade
+```
